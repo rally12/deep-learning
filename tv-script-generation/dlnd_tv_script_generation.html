@@ -12331,10 +12331,11 @@ Default GPU Device: /gpu:0
     <span class="n">layer_count</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">keep_prob</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="mf">0.7</span><span class="p">,</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;keep_prob&quot;</span><span class="p">)</span>
     <span class="n">lstm</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">rnn</span><span class="o">.</span><span class="n">BasicLSTMCell</span><span class="p">(</span><span class="n">rnn_size</span><span class="p">,</span> <span class="n">state_is_tuple</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">lstm2</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">rnn</span><span class="o">.</span><span class="n">BasicLSTMCell</span><span class="p">(</span><span class="n">rnn_size</span><span class="p">,</span> <span class="n">state_is_tuple</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     
     <span class="n">dropout</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">rnn</span><span class="o">.</span><span class="n">DropoutWrapper</span><span class="p">(</span><span class="n">lstm</span><span class="p">,</span> <span class="n">output_keep_prob</span><span class="o">=</span><span class="n">keep_prob</span><span class="p">)</span>
     
-    <span class="n">cell</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">rnn</span><span class="o">.</span><span class="n">MultiRNNCell</span><span class="p">([</span><span class="n">lstm</span><span class="p">]</span><span class="o">*</span><span class="n">layer_count</span><span class="p">,</span> <span class="n">state_is_tuple</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">cell</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">rnn</span><span class="o">.</span><span class="n">MultiRNNCell</span><span class="p">([</span><span class="n">lstm</span><span class="p">,</span> <span class="n">lstm2</span><span class="p">],</span> <span class="n">state_is_tuple</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">initial_state</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="n">zero_state</span><span class="p">(</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
     <span class="n">initial_state</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">initial_state</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;initial_state&quot;</span> <span class="p">)</span>
     <span class="c1">#_outputs, final_state = tf.nn.rnn(cell, rnn_inputs, initial_state=init_state) </span>
@@ -12395,7 +12396,7 @@ Default GPU Device: /gpu:0
 <span class="sd">    :return: Embedded input.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO: Implement Function    </span>
-    <span class="n">ret</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">truncated_normal</span><span class="p">((</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">embed_dim</span><span class="p">),</span> <span class="n">stddev</span><span class="o">=</span><span class="mf">0.001</span><span class="p">))</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">random_uniform</span><span class="p">((</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">embed_dim</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
     <span class="n">ret</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">embedding_lookup</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">input_data</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;shape </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ret</span><span class="o">.</span><span class="n">get_shape</span><span class="p">()</span><span class="o">.</span><span class="n">as_list</span><span class="p">()))</span>
     <span class="k">return</span> <span class="n">ret</span>
@@ -12524,7 +12525,7 @@ Tests Passed
     <span class="c1"># TODO: Implement Function</span>
     <span class="n">embedded</span> <span class="o">=</span> <span class="n">get_embed</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">,</span> <span class="n">rnn_size</span><span class="p">)</span>
     <span class="n">out</span><span class="p">,</span> <span class="n">fin</span> <span class="o">=</span> <span class="n">build_rnn</span><span class="p">(</span><span class="n">cell</span><span class="p">,</span> <span class="n">embedded</span><span class="p">)</span> 
-    <span class="n">out</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">fully_connected</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">vocab_size</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">fully_connected</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">activation_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     
     <span class="n">out_shape</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">get_shape</span><span class="p">()</span><span class="o">.</span><span class="n">as_list</span><span class="p">()</span> 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;build_nn embedded</span><span class="si">{}</span><span class="s2">, out:</span><span class="si">{}</span><span class="s2">, fin:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">embedded</span><span class="o">.</span><span class="n">get_shape</span><span class="p">()</span><span class="o">.</span><span class="n">as_list</span><span class="p">(),</span><span class="n">out_shape</span><span class="p">,</span> <span class="n">fin</span><span class="o">.</span><span class="n">get_shape</span><span class="p">()</span><span class="o">.</span><span class="n">as_list</span><span class="p">()))</span>
@@ -12598,6 +12599,19 @@ Tests Passed
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
@@ -12605,26 +12619,31 @@ Tests Passed
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return batches of input and target</span>
 <span class="sd">    :param int_text: Text with the words replaced by their ids</span>
-<span class="sd">    :param batch_size: The s0ize of batch</span>
+<span class="sd">    :param batch_size: The size of batch</span>
 <span class="sd">    :param seq_length: The length of sequence</span>
 <span class="sd">    :return: Batches as a Numpy array</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO: Implement Function</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="n">int_text</span> <span class="o">+</span> <span class="n">int_text</span><span class="p">[:</span><span class="n">batch_size</span><span class="p">]</span>
-    <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">half</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">seq_length</span><span class="p">)</span>
-    <span class="n">text_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">int_text</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">targets</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">text_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="n">seq_length</span><span class="o">*</span><span class="n">batch_size</span><span class="p">)</span>
     <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;get_batches text:</span><span class="si">{}</span><span class="s2">, batch:</span><span class="si">{}</span><span class="s2">, seq:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">text_len</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_length</span><span class="p">))</span>
-    <span class="n">batch</span><span class="o">=</span><span class="p">[]</span>    
-    <span class="n">ret</span><span class="o">=</span><span class="p">[]</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">int_text</span><span class="p">)</span><span class="o">+</span><span class="n">seq_length</span><span class="p">,</span> <span class="n">seq_length</span><span class="p">):</span>
-        <span class="n">seq</span> <span class="o">=</span> <span class="n">int_text</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">seq_length</span><span class="p">]</span>
-        <span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+    <span class="n">ret</span><span class="o">=</span><span class="p">[]</span>  
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">text_len</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">seq_length</span><span class="p">):</span>
+        <span class="n">seq</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">int_text</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">seq_length</span><span class="p">])</span>
+        <span class="n">inputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">int_text</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">seq_length</span><span class="p">]))</span>
+        <span class="n">targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">int_text</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">seq_length</span><span class="o">+</span><span class="mi">1</span><span class="p">]))</span>
         
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span><span class="o">/</span><span class="n">batch_size</span><span class="p">)):</span>
-        <span class="n">pos</span><span class="o">=</span><span class="n">batch_size</span><span class="o">*</span><span class="n">i</span>
-        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">batch</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">batch_size</span><span class="p">],</span><span class="n">batch</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">batch_size</span><span class="p">]])</span>
-    <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+        
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">),</span><span class="n">batch_size</span><span class="p">):</span>
+        <span class="n">pos</span><span class="o">=</span><span class="n">batch_size</span>
+        <span class="c1">#batch_pair = n</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">inputs</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">batch_size</span><span class="p">],</span> <span class="n">targets</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">batch_size</span><span class="p">]])</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;batch test &quot;</span><span class="p">,</span> <span class="n">ret</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">ret</span><span class="p">[</span><span class="mi">3</span><span class="p">,:,</span><span class="mi">2</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">ret</span>
 
 
@@ -12646,7 +12665,9 @@ Tests Passed
 <div class="prompt"></div>
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>get_batches text:5128, batch:128, seq:5
+<pre>get_batches text:4480, batch:128, seq:5
+batch test  (7, 2, 128, 5) [[1930 1931 1932 1933 1934]
+ [1931 1932 1933 1934 1935]]
 Tests Passed
 </pre>
 </div>
@@ -12680,23 +12701,31 @@ Tests Passed
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Number of Epochs</span>
-<span class="n">num_epochs</span> <span class="o">=</span> <span class="mi">3000</span>
+<span class="n">num_epochs</span> <span class="o">=</span> <span class="mi">300</span>
 <span class="c1"># Batch Size</span>
-<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">2048</span><span class="c1">#6779</span>
-<span class="c1"># RNN Size</span>
-<span class="n">rnn_size</span> <span class="o">=</span> <span class="mi">512</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">256</span>
+<span class="n">rnn_size</span> <span class="o">=</span> <span class="mi">1024</span>
 <span class="c1"># Sequence Length</span>
-<span class="n">seq_length</span> <span class="o">=</span> <span class="mi">16</span>
-<span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.00012</span>
+<span class="n">seq_length</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">learning_rate</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">rnn_size</span><span class="o">*</span><span class="n">seq_length</span><span class="o">*</span><span class="mi">6700</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span> <span class="s2">&quot;learning rate </span><span class="si">{}</span><span class="s2">, vocab_size </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">learning_rate</span><span class="p">,</span><span class="mi">6700</span><span class="p">))</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">                100      inf</span>
 <span class="sd">    0.0012 --  1.666       860-1210: 1.259</span>
 <span class="sd">    0.00012 -- 5.878      1920-2190: 1.070</span>
 <span class="sd">    0.000012   7.4             3000: 2.107</span>
-<span class="sd">    0.00012 -- 6.047     -- embedding w truncated normal.</span>
+<span class="sd">    0.00012 -- 6.047           3000: 0.964-- embedding w truncated normal.</span>
+<span class="sd">    </span>
+<span class="sd">    1024</span>
+<span class="sd">    0.00812  -- 1.182 stuck</span>
+<span class="sd">    0.00612  -- 0.961 stuck</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="c1"># Show stats for every n number of batches</span>
 <span class="n">show_every_n_batches</span> <span class="o">=</span> <span class="mi">20</span>
+
+<span class="n">tf</span><span class="o">.</span><span class="n">set_random_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">DON&#39;T MODIFY ANYTHING IN THIS CELL THAT IS BELOW THIS LINE</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -12704,6 +12733,22 @@ Tests Passed
 </pre></div>
 
 </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>learning rate 0.00015586083376681765, vocab_size 6700
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
@@ -12766,8 +12811,8 @@ Tests Passed
 <div class="prompt"></div>
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>shape [None, None, 512]
-build_nn embedded[None, None, 512], out:[None, None, 6779], fin:[2, 2, None, 512]
+<pre>shape [None, None, 1024]
+build_nn embedded[None, None, 1024], out:[None, None, 6779], fin:[2, 2, None, 1024]
 
 </pre>
 </div>
@@ -12838,307 +12883,669 @@ build_nn embedded[None, None, 512], out:[None, None, 6779], fin:[2, 2, None, 512
 <div class="prompt"></div>
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>get_batches text:71148, batch:2048, seq:16
-Epoch   0 Batch    0/2   train_loss = 8.822
-Epoch  10 Batch    0/2   train_loss = 8.778
-Epoch  20 Batch    0/2   train_loss = 7.492
-Epoch  30 Batch    0/2   train_loss = 6.569
-Epoch  40 Batch    0/2   train_loss = 6.300
-Epoch  50 Batch    0/2   train_loss = 6.211
-Epoch  60 Batch    0/2   train_loss = 6.161
-Epoch  70 Batch    0/2   train_loss = 6.124
-Epoch  80 Batch    0/2   train_loss = 6.093
-Epoch  90 Batch    0/2   train_loss = 6.068
-Epoch 100 Batch    0/2   train_loss = 6.047
-Epoch 110 Batch    0/2   train_loss = 6.030
-Epoch 120 Batch    0/2   train_loss = 6.016
-Epoch 130 Batch    0/2   train_loss = 6.003
-Epoch 140 Batch    0/2   train_loss = 5.991
-Epoch 150 Batch    0/2   train_loss = 5.980
-Epoch 160 Batch    0/2   train_loss = 5.968
-Epoch 170 Batch    0/2   train_loss = 5.956
-Epoch 180 Batch    0/2   train_loss = 5.945
-Epoch 190 Batch    0/2   train_loss = 5.934
-Epoch 200 Batch    0/2   train_loss = 5.923
-Epoch 210 Batch    0/2   train_loss = 5.914
-Epoch 220 Batch    0/2   train_loss = 5.905
-Epoch 230 Batch    0/2   train_loss = 5.898
-Epoch 240 Batch    0/2   train_loss = 5.892
-Epoch 250 Batch    0/2   train_loss = 5.887
-Epoch 260 Batch    0/2   train_loss = 5.884
-Epoch 270 Batch    0/2   train_loss = 5.881
-Epoch 280 Batch    0/2   train_loss = 5.879
-Epoch 290 Batch    0/2   train_loss = 5.876
-Epoch 300 Batch    0/2   train_loss = 5.875
-Epoch 310 Batch    0/2   train_loss = 5.873
-Epoch 320 Batch    0/2   train_loss = 5.871
-Epoch 330 Batch    0/2   train_loss = 5.870
-Epoch 340 Batch    0/2   train_loss = 5.868
-Epoch 350 Batch    0/2   train_loss = 5.867
-Epoch 360 Batch    0/2   train_loss = 5.866
-Epoch 370 Batch    0/2   train_loss = 5.864
-Epoch 380 Batch    0/2   train_loss = 5.862
-Epoch 390 Batch    0/2   train_loss = 5.861
-Epoch 400 Batch    0/2   train_loss = 5.859
-Epoch 410 Batch    0/2   train_loss = 5.857
-Epoch 420 Batch    0/2   train_loss = 5.855
-Epoch 430 Batch    0/2   train_loss = 5.850
-Epoch 440 Batch    0/2   train_loss = 5.844
-Epoch 450 Batch    0/2   train_loss = 5.835
-Epoch 460 Batch    0/2   train_loss = 5.819
-Epoch 470 Batch    0/2   train_loss = 5.800
-Epoch 480 Batch    0/2   train_loss = 5.780
-Epoch 490 Batch    0/2   train_loss = 5.757
-Epoch 500 Batch    0/2   train_loss = 5.735
-Epoch 510 Batch    0/2   train_loss = 5.716
-Epoch 520 Batch    0/2   train_loss = 5.697
-Epoch 530 Batch    0/2   train_loss = 5.676
-Epoch 540 Batch    0/2   train_loss = 5.654
-Epoch 550 Batch    0/2   train_loss = 5.636
-Epoch 560 Batch    0/2   train_loss = 5.620
-Epoch 570 Batch    0/2   train_loss = 5.605
-Epoch 580 Batch    0/2   train_loss = 5.590
-Epoch 590 Batch    0/2   train_loss = 5.567
-Epoch 600 Batch    0/2   train_loss = 5.550
-Epoch 610 Batch    0/2   train_loss = 5.535
-Epoch 620 Batch    0/2   train_loss = 5.521
-Epoch 630 Batch    0/2   train_loss = 5.505
-Epoch 640 Batch    0/2   train_loss = 5.492
-Epoch 650 Batch    0/2   train_loss = 5.478
-Epoch 660 Batch    0/2   train_loss = 5.464
-Epoch 670 Batch    0/2   train_loss = 5.450
-Epoch 680 Batch    0/2   train_loss = 5.438
-Epoch 690 Batch    0/2   train_loss = 5.426
-Epoch 700 Batch    0/2   train_loss = 5.412
-Epoch 710 Batch    0/2   train_loss = 5.398
-Epoch 720 Batch    0/2   train_loss = 5.379
-Epoch 730 Batch    0/2   train_loss = 5.352
-Epoch 740 Batch    0/2   train_loss = 5.319
-Epoch 750 Batch    0/2   train_loss = 5.276
-Epoch 760 Batch    0/2   train_loss = 5.229
-Epoch 770 Batch    0/2   train_loss = 5.173
-Epoch 780 Batch    0/2   train_loss = 5.112
-Epoch 790 Batch    0/2   train_loss = 5.048
-Epoch 800 Batch    0/2   train_loss = 4.977
-Epoch 810 Batch    0/2   train_loss = 4.900
-Epoch 820 Batch    0/2   train_loss = 4.817
-Epoch 830 Batch    0/2   train_loss = 4.734
-Epoch 840 Batch    0/2   train_loss = 4.659
-Epoch 850 Batch    0/2   train_loss = 4.590
-Epoch 860 Batch    0/2   train_loss = 4.527
-Epoch 870 Batch    0/2   train_loss = 4.470
-Epoch 880 Batch    0/2   train_loss = 4.416
-Epoch 890 Batch    0/2   train_loss = 4.366
-Epoch 900 Batch    0/2   train_loss = 4.318
-Epoch 910 Batch    0/2   train_loss = 4.270
-Epoch 920 Batch    0/2   train_loss = 4.226
-Epoch 930 Batch    0/2   train_loss = 4.182
-Epoch 940 Batch    0/2   train_loss = 4.136
-Epoch 950 Batch    0/2   train_loss = 4.093
-Epoch 960 Batch    0/2   train_loss = 4.051
-Epoch 970 Batch    0/2   train_loss = 4.008
-Epoch 980 Batch    0/2   train_loss = 3.966
-Epoch 990 Batch    0/2   train_loss = 3.928
-Epoch 1000 Batch    0/2   train_loss = 3.890
-Epoch 1010 Batch    0/2   train_loss = 3.854
-Epoch 1020 Batch    0/2   train_loss = 3.820
-Epoch 1030 Batch    0/2   train_loss = 3.787
-Epoch 1040 Batch    0/2   train_loss = 3.748
-Epoch 1050 Batch    0/2   train_loss = 3.714
-Epoch 1060 Batch    0/2   train_loss = 3.682
-Epoch 1070 Batch    0/2   train_loss = 3.649
-Epoch 1080 Batch    0/2   train_loss = 3.618
-Epoch 1090 Batch    0/2   train_loss = 3.587
-Epoch 1100 Batch    0/2   train_loss = 3.558
-Epoch 1110 Batch    0/2   train_loss = 3.528
-Epoch 1120 Batch    0/2   train_loss = 3.500
-Epoch 1130 Batch    0/2   train_loss = 3.472
-Epoch 1140 Batch    0/2   train_loss = 3.444
-Epoch 1150 Batch    0/2   train_loss = 3.418
-Epoch 1160 Batch    0/2   train_loss = 3.392
-Epoch 1170 Batch    0/2   train_loss = 3.366
-Epoch 1180 Batch    0/2   train_loss = 3.341
-Epoch 1190 Batch    0/2   train_loss = 3.316
-Epoch 1200 Batch    0/2   train_loss = 3.290
-Epoch 1210 Batch    0/2   train_loss = 3.265
-Epoch 1220 Batch    0/2   train_loss = 3.242
-Epoch 1230 Batch    0/2   train_loss = 3.219
-Epoch 1240 Batch    0/2   train_loss = 3.196
-Epoch 1250 Batch    0/2   train_loss = 3.173
-Epoch 1260 Batch    0/2   train_loss = 3.150
-Epoch 1270 Batch    0/2   train_loss = 3.127
-Epoch 1280 Batch    0/2   train_loss = 3.104
-Epoch 1290 Batch    0/2   train_loss = 3.080
-Epoch 1300 Batch    0/2   train_loss = 3.057
-Epoch 1310 Batch    0/2   train_loss = 3.032
-Epoch 1320 Batch    0/2   train_loss = 3.006
-Epoch 1330 Batch    0/2   train_loss = 2.981
-Epoch 1340 Batch    0/2   train_loss = 2.954
-Epoch 1350 Batch    0/2   train_loss = 2.928
-Epoch 1360 Batch    0/2   train_loss = 2.902
-Epoch 1370 Batch    0/2   train_loss = 2.877
-Epoch 1380 Batch    0/2   train_loss = 2.851
-Epoch 1390 Batch    0/2   train_loss = 2.825
-Epoch 1400 Batch    0/2   train_loss = 2.798
-Epoch 1410 Batch    0/2   train_loss = 2.771
-Epoch 1420 Batch    0/2   train_loss = 2.744
-Epoch 1430 Batch    0/2   train_loss = 2.718
-Epoch 1440 Batch    0/2   train_loss = 2.691
-Epoch 1450 Batch    0/2   train_loss = 2.663
-Epoch 1460 Batch    0/2   train_loss = 2.633
-Epoch 1470 Batch    0/2   train_loss = 2.602
-Epoch 1480 Batch    0/2   train_loss = 2.570
-Epoch 1490 Batch    0/2   train_loss = 2.538
-Epoch 1500 Batch    0/2   train_loss = 2.507
-Epoch 1510 Batch    0/2   train_loss = 2.478
-Epoch 1520 Batch    0/2   train_loss = 2.448
-Epoch 1530 Batch    0/2   train_loss = 2.418
-Epoch 1540 Batch    0/2   train_loss = 2.388
-Epoch 1550 Batch    0/2   train_loss = 2.358
-Epoch 1560 Batch    0/2   train_loss = 2.327
-Epoch 1570 Batch    0/2   train_loss = 2.294
-Epoch 1580 Batch    0/2   train_loss = 2.261
-Epoch 1590 Batch    0/2   train_loss = 2.228
-Epoch 1600 Batch    0/2   train_loss = 2.194
-Epoch 1610 Batch    0/2   train_loss = 2.159
-Epoch 1620 Batch    0/2   train_loss = 2.123
-Epoch 1630 Batch    0/2   train_loss = 2.088
-Epoch 1640 Batch    0/2   train_loss = 2.051
-Epoch 1650 Batch    0/2   train_loss = 2.014
-Epoch 1660 Batch    0/2   train_loss = 1.977
-Epoch 1670 Batch    0/2   train_loss = 1.940
-Epoch 1680 Batch    0/2   train_loss = 1.902
-Epoch 1690 Batch    0/2   train_loss = 1.865
-Epoch 1700 Batch    0/2   train_loss = 1.828
-Epoch 1710 Batch    0/2   train_loss = 1.792
-Epoch 1720 Batch    0/2   train_loss = 1.757
-Epoch 1730 Batch    0/2   train_loss = 1.723
-Epoch 1740 Batch    0/2   train_loss = 1.688
-Epoch 1750 Batch    0/2   train_loss = 1.653
-Epoch 1760 Batch    0/2   train_loss = 1.618
-Epoch 1770 Batch    0/2   train_loss = 1.583
-Epoch 1780 Batch    0/2   train_loss = 1.548
-Epoch 1790 Batch    0/2   train_loss = 1.514
-Epoch 1800 Batch    0/2   train_loss = 1.480
-Epoch 1810 Batch    0/2   train_loss = 1.448
-Epoch 1820 Batch    0/2   train_loss = 1.417
-Epoch 1830 Batch    0/2   train_loss = 1.387
-Epoch 1840 Batch    0/2   train_loss = 1.360
-Epoch 1850 Batch    0/2   train_loss = 1.335
-Epoch 1860 Batch    0/2   train_loss = 1.312
-Epoch 1870 Batch    0/2   train_loss = 1.290
-Epoch 1880 Batch    0/2   train_loss = 1.270
-Epoch 1890 Batch    0/2   train_loss = 1.252
-Epoch 1900 Batch    0/2   train_loss = 1.235
-Epoch 1910 Batch    0/2   train_loss = 1.219
-Epoch 1920 Batch    0/2   train_loss = 1.202
-Epoch 1930 Batch    0/2   train_loss = 1.187
-Epoch 1940 Batch    0/2   train_loss = 1.173
-Epoch 1950 Batch    0/2   train_loss = 1.160
-Epoch 1960 Batch    0/2   train_loss = 1.148
-Epoch 1970 Batch    0/2   train_loss = 1.136
-Epoch 1980 Batch    0/2   train_loss = 1.126
-Epoch 1990 Batch    0/2   train_loss = 1.116
-Epoch 2000 Batch    0/2   train_loss = 1.107
-Epoch 2010 Batch    0/2   train_loss = 1.099
-Epoch 2020 Batch    0/2   train_loss = 1.091
-Epoch 2030 Batch    0/2   train_loss = 1.084
-Epoch 2040 Batch    0/2   train_loss = 1.077
-Epoch 2050 Batch    0/2   train_loss = 1.071
-Epoch 2060 Batch    0/2   train_loss = 1.065
-Epoch 2070 Batch    0/2   train_loss = 1.059
-Epoch 2080 Batch    0/2   train_loss = 1.054
-Epoch 2090 Batch    0/2   train_loss = 1.048
-Epoch 2100 Batch    0/2   train_loss = 1.044
-Epoch 2110 Batch    0/2   train_loss = 1.039
-Epoch 2120 Batch    0/2   train_loss = 1.034
-Epoch 2130 Batch    0/2   train_loss = 1.030
-Epoch 2140 Batch    0/2   train_loss = 1.026
-Epoch 2150 Batch    0/2   train_loss = 1.022
-Epoch 2160 Batch    0/2   train_loss = 1.018
-Epoch 2170 Batch    0/2   train_loss = 1.015
-Epoch 2180 Batch    0/2   train_loss = 1.012
-Epoch 2190 Batch    0/2   train_loss = 1.009
-Epoch 2200 Batch    0/2   train_loss = 1.006
-Epoch 2210 Batch    0/2   train_loss = 1.004
-Epoch 2220 Batch    0/2   train_loss = 1.002
-Epoch 2230 Batch    0/2   train_loss = 0.999
-Epoch 2240 Batch    0/2   train_loss = 0.997
-Epoch 2250 Batch    0/2   train_loss = 0.996
-Epoch 2260 Batch    0/2   train_loss = 0.994
-Epoch 2270 Batch    0/2   train_loss = 0.992
-Epoch 2280 Batch    0/2   train_loss = 0.991
-Epoch 2290 Batch    0/2   train_loss = 0.990
-Epoch 2300 Batch    0/2   train_loss = 0.988
-Epoch 2310 Batch    0/2   train_loss = 0.987
-Epoch 2320 Batch    0/2   train_loss = 0.986
-Epoch 2330 Batch    0/2   train_loss = 0.985
-Epoch 2340 Batch    0/2   train_loss = 0.984
-Epoch 2350 Batch    0/2   train_loss = 0.983
-Epoch 2360 Batch    0/2   train_loss = 0.982
-Epoch 2370 Batch    0/2   train_loss = 0.982
-Epoch 2380 Batch    0/2   train_loss = 0.981
-Epoch 2390 Batch    0/2   train_loss = 0.980
-Epoch 2400 Batch    0/2   train_loss = 0.979
-Epoch 2410 Batch    0/2   train_loss = 0.979
-Epoch 2420 Batch    0/2   train_loss = 0.978
-Epoch 2430 Batch    0/2   train_loss = 0.977
-Epoch 2440 Batch    0/2   train_loss = 0.977
-Epoch 2450 Batch    0/2   train_loss = 0.976
-Epoch 2460 Batch    0/2   train_loss = 0.976
-Epoch 2470 Batch    0/2   train_loss = 0.975
-Epoch 2480 Batch    0/2   train_loss = 0.975
-Epoch 2490 Batch    0/2   train_loss = 0.974
-Epoch 2500 Batch    0/2   train_loss = 0.974
-Epoch 2510 Batch    0/2   train_loss = 0.973
-Epoch 2520 Batch    0/2   train_loss = 0.973
-Epoch 2530 Batch    0/2   train_loss = 0.972
-Epoch 2540 Batch    0/2   train_loss = 0.972
-Epoch 2550 Batch    0/2   train_loss = 0.972
-Epoch 2560 Batch    0/2   train_loss = 0.971
-Epoch 2570 Batch    0/2   train_loss = 0.971
-Epoch 2580 Batch    0/2   train_loss = 0.971
-Epoch 2590 Batch    0/2   train_loss = 0.970
-Epoch 2600 Batch    0/2   train_loss = 0.970
-Epoch 2610 Batch    0/2   train_loss = 0.970
-Epoch 2620 Batch    0/2   train_loss = 0.970
-Epoch 2630 Batch    0/2   train_loss = 0.969
-Epoch 2640 Batch    0/2   train_loss = 0.969
-Epoch 2650 Batch    0/2   train_loss = 0.969
-Epoch 2660 Batch    0/2   train_loss = 0.969
-Epoch 2670 Batch    0/2   train_loss = 0.968
-Epoch 2680 Batch    0/2   train_loss = 0.968
-Epoch 2690 Batch    0/2   train_loss = 0.968
-Epoch 2700 Batch    0/2   train_loss = 0.968
-Epoch 2710 Batch    0/2   train_loss = 0.967
-Epoch 2720 Batch    0/2   train_loss = 0.967
-Epoch 2730 Batch    0/2   train_loss = 0.967
-Epoch 2740 Batch    0/2   train_loss = 0.967
-Epoch 2750 Batch    0/2   train_loss = 0.967
-Epoch 2760 Batch    0/2   train_loss = 0.966
-Epoch 2770 Batch    0/2   train_loss = 0.966
-Epoch 2780 Batch    0/2   train_loss = 0.966
-Epoch 2790 Batch    0/2   train_loss = 0.966
-Epoch 2800 Batch    0/2   train_loss = 0.966
-Epoch 2810 Batch    0/2   train_loss = 0.966
-Epoch 2820 Batch    0/2   train_loss = 0.966
-Epoch 2830 Batch    0/2   train_loss = 0.965
-Epoch 2840 Batch    0/2   train_loss = 0.965
-Epoch 2850 Batch    0/2   train_loss = 0.965
-Epoch 2860 Batch    0/2   train_loss = 0.965
-Epoch 2870 Batch    0/2   train_loss = 0.965
-Epoch 2880 Batch    0/2   train_loss = 0.965
-Epoch 2890 Batch    0/2   train_loss = 0.965
-Epoch 2900 Batch    0/2   train_loss = 0.964
-Epoch 2910 Batch    0/2   train_loss = 0.964
-Epoch 2920 Batch    0/2   train_loss = 0.964
-Epoch 2930 Batch    0/2   train_loss = 0.964
-Epoch 2940 Batch    0/2   train_loss = 0.964
-Epoch 2950 Batch    0/2   train_loss = 0.964
-Epoch 2960 Batch    0/2   train_loss = 0.964
-Epoch 2970 Batch    0/2   train_loss = 0.964
-Epoch 2980 Batch    0/2   train_loss = 0.964
-Epoch 2990 Batch    0/2   train_loss = 0.963
+<pre>get_batches text:67584, batch:256, seq:6
+batch test  (44, 2, 256, 6) [[1731 1702 2838    0 3165 1284]
+ [1702 2838    0 3165 1284 1381]]
+Epoch   0 Batch    0/44   train_loss = 8.821
+Epoch   0 Batch   20/44   train_loss = 7.315
+Epoch   0 Batch   40/44   train_loss = 6.810
+Epoch   1 Batch   16/44   train_loss = 6.067
+Epoch   1 Batch   36/44   train_loss = 6.118
+Epoch   2 Batch   12/44   train_loss = 5.871
+Epoch   2 Batch   32/44   train_loss = 5.909
+Epoch   3 Batch    8/44   train_loss = 5.717
+Epoch   3 Batch   28/44   train_loss = 5.714
+Epoch   4 Batch    4/44   train_loss = 5.441
+Epoch   4 Batch   24/44   train_loss = 5.554
+Epoch   5 Batch    0/44   train_loss = 5.268
+Epoch   5 Batch   20/44   train_loss = 5.203
+Epoch   5 Batch   40/44   train_loss = 5.571
+Epoch   6 Batch   16/44   train_loss = 5.039
+Epoch   6 Batch   36/44   train_loss = 5.321
+Epoch   7 Batch   12/44   train_loss = 5.094
+Epoch   7 Batch   32/44   train_loss = 5.243
+Epoch   8 Batch    8/44   train_loss = 5.032
+Epoch   8 Batch   28/44   train_loss = 5.160
+Epoch   9 Batch    4/44   train_loss = 4.871
+Epoch   9 Batch   24/44   train_loss = 5.040
+Epoch  10 Batch    0/44   train_loss = 4.754
+Epoch  10 Batch   20/44   train_loss = 4.708
+Epoch  10 Batch   40/44   train_loss = 5.083
+Epoch  11 Batch   16/44   train_loss = 4.584
+Epoch  11 Batch   36/44   train_loss = 4.877
+Epoch  12 Batch   12/44   train_loss = 4.703
+Epoch  12 Batch   32/44   train_loss = 4.862
+Epoch  13 Batch    8/44   train_loss = 4.631
+Epoch  13 Batch   28/44   train_loss = 4.789
+Epoch  14 Batch    4/44   train_loss = 4.497
+Epoch  14 Batch   24/44   train_loss = 4.677
+Epoch  15 Batch    0/44   train_loss = 4.427
+Epoch  15 Batch   20/44   train_loss = 4.394
+Epoch  15 Batch   40/44   train_loss = 4.730
+Epoch  16 Batch   16/44   train_loss = 4.284
+Epoch  16 Batch   36/44   train_loss = 4.545
+Epoch  17 Batch   12/44   train_loss = 4.406
+Epoch  17 Batch   32/44   train_loss = 4.553
+Epoch  18 Batch    8/44   train_loss = 4.326
+Epoch  18 Batch   28/44   train_loss = 4.478
+Epoch  19 Batch    4/44   train_loss = 4.202
+Epoch  19 Batch   24/44   train_loss = 4.365
+Epoch  20 Batch    0/44   train_loss = 4.149
+Epoch  20 Batch   20/44   train_loss = 4.129
+Epoch  20 Batch   40/44   train_loss = 4.400
+Epoch  21 Batch   16/44   train_loss = 4.014
+Epoch  21 Batch   36/44   train_loss = 4.254
+Epoch  22 Batch   12/44   train_loss = 4.124
+Epoch  22 Batch   32/44   train_loss = 4.272
+Epoch  23 Batch    8/44   train_loss = 4.056
+Epoch  23 Batch   28/44   train_loss = 4.200
+Epoch  24 Batch    4/44   train_loss = 3.941
+Epoch  24 Batch   24/44   train_loss = 4.091
+Epoch  25 Batch    0/44   train_loss = 3.920
+Epoch  25 Batch   20/44   train_loss = 3.902
+Epoch  25 Batch   40/44   train_loss = 4.156
+Epoch  26 Batch   16/44   train_loss = 3.827
+Epoch  26 Batch   36/44   train_loss = 4.015
+Epoch  27 Batch   12/44   train_loss = 3.882
+Epoch  27 Batch   32/44   train_loss = 4.010
+Epoch  28 Batch    8/44   train_loss = 3.817
+Epoch  28 Batch   28/44   train_loss = 3.962
+Epoch  29 Batch    4/44   train_loss = 3.725
+Epoch  29 Batch   24/44   train_loss = 3.810
+Epoch  30 Batch    0/44   train_loss = 3.692
+Epoch  30 Batch   20/44   train_loss = 3.680
+Epoch  30 Batch   40/44   train_loss = 3.851
+Epoch  31 Batch   16/44   train_loss = 3.562
+Epoch  31 Batch   36/44   train_loss = 3.753
+Epoch  32 Batch   12/44   train_loss = 3.616
+Epoch  32 Batch   32/44   train_loss = 3.708
+Epoch  33 Batch    8/44   train_loss = 3.553
+Epoch  33 Batch   28/44   train_loss = 3.679
+Epoch  34 Batch    4/44   train_loss = 3.426
+Epoch  34 Batch   24/44   train_loss = 3.520
+Epoch  35 Batch    0/44   train_loss = 3.399
+Epoch  35 Batch   20/44   train_loss = 3.420
+Epoch  35 Batch   40/44   train_loss = 3.545
+Epoch  36 Batch   16/44   train_loss = 3.310
+Epoch  36 Batch   36/44   train_loss = 3.460
+Epoch  37 Batch   12/44   train_loss = 3.342
+Epoch  37 Batch   32/44   train_loss = 3.418
+Epoch  38 Batch    8/44   train_loss = 3.290
+Epoch  38 Batch   28/44   train_loss = 3.398
+Epoch  39 Batch    4/44   train_loss = 3.164
+Epoch  39 Batch   24/44   train_loss = 3.231
+Epoch  40 Batch    0/44   train_loss = 3.138
+Epoch  40 Batch   20/44   train_loss = 3.171
+Epoch  40 Batch   40/44   train_loss = 3.253
+Epoch  41 Batch   16/44   train_loss = 3.069
+Epoch  41 Batch   36/44   train_loss = 3.172
+Epoch  42 Batch   12/44   train_loss = 3.067
+Epoch  42 Batch   32/44   train_loss = 3.126
+Epoch  43 Batch    8/44   train_loss = 3.030
+Epoch  43 Batch   28/44   train_loss = 3.121
+Epoch  44 Batch    4/44   train_loss = 2.914
+Epoch  44 Batch   24/44   train_loss = 2.963
+Epoch  45 Batch    0/44   train_loss = 2.897
+Epoch  45 Batch   20/44   train_loss = 2.954
+Epoch  45 Batch   40/44   train_loss = 3.040
+Epoch  46 Batch   16/44   train_loss = 2.941
+Epoch  46 Batch   36/44   train_loss = 2.953
+Epoch  47 Batch   12/44   train_loss = 2.915
+Epoch  47 Batch   32/44   train_loss = 2.939
+Epoch  48 Batch    8/44   train_loss = 2.894
+Epoch  48 Batch   28/44   train_loss = 2.954
+Epoch  49 Batch    4/44   train_loss = 2.779
+Epoch  49 Batch   24/44   train_loss = 2.787
+Epoch  50 Batch    0/44   train_loss = 2.739
+Epoch  50 Batch   20/44   train_loss = 2.801
+Epoch  50 Batch   40/44   train_loss = 2.799
+Epoch  51 Batch   16/44   train_loss = 2.737
+Epoch  51 Batch   36/44   train_loss = 2.771
+Epoch  52 Batch   12/44   train_loss = 2.643
+Epoch  52 Batch   32/44   train_loss = 2.688
+Epoch  53 Batch    8/44   train_loss = 2.613
+Epoch  53 Batch   28/44   train_loss = 2.735
+Epoch  54 Batch    4/44   train_loss = 2.529
+Epoch  54 Batch   24/44   train_loss = 2.511
+Epoch  55 Batch    0/44   train_loss = 2.528
+Epoch  55 Batch   20/44   train_loss = 2.572
+Epoch  55 Batch   40/44   train_loss = 2.594
+Epoch  56 Batch   16/44   train_loss = 2.500
+Epoch  56 Batch   36/44   train_loss = 2.510
+Epoch  57 Batch   12/44   train_loss = 2.425
+Epoch  57 Batch   32/44   train_loss = 2.523
+Epoch  58 Batch    8/44   train_loss = 2.435
+Epoch  58 Batch   28/44   train_loss = 2.495
+Epoch  59 Batch    4/44   train_loss = 2.346
+Epoch  59 Batch   24/44   train_loss = 2.336
+Epoch  60 Batch    0/44   train_loss = 2.334
+Epoch  60 Batch   20/44   train_loss = 2.349
+Epoch  60 Batch   40/44   train_loss = 2.304
+Epoch  61 Batch   16/44   train_loss = 2.305
+Epoch  61 Batch   36/44   train_loss = 2.282
+Epoch  62 Batch   12/44   train_loss = 2.207
+Epoch  62 Batch   32/44   train_loss = 2.247
+Epoch  63 Batch    8/44   train_loss = 2.225
+Epoch  63 Batch   28/44   train_loss = 2.291
+Epoch  64 Batch    4/44   train_loss = 2.164
+Epoch  64 Batch   24/44   train_loss = 2.100
+Epoch  65 Batch    0/44   train_loss = 2.174
+Epoch  65 Batch   20/44   train_loss = 2.177
+Epoch  65 Batch   40/44   train_loss = 2.116
+Epoch  66 Batch   16/44   train_loss = 2.082
+Epoch  66 Batch   36/44   train_loss = 2.070
+Epoch  67 Batch   12/44   train_loss = 2.017
+Epoch  67 Batch   32/44   train_loss = 2.040
+Epoch  68 Batch    8/44   train_loss = 2.005
+Epoch  68 Batch   28/44   train_loss = 2.035
+Epoch  69 Batch    4/44   train_loss = 1.971
+Epoch  69 Batch   24/44   train_loss = 1.904
+Epoch  70 Batch    0/44   train_loss = 1.912
+Epoch  70 Batch   20/44   train_loss = 1.966
+Epoch  70 Batch   40/44   train_loss = 1.869
+Epoch  71 Batch   16/44   train_loss = 1.923
+Epoch  71 Batch   36/44   train_loss = 1.866
+Epoch  72 Batch   12/44   train_loss = 1.785
+Epoch  72 Batch   32/44   train_loss = 1.835
+Epoch  73 Batch    8/44   train_loss = 1.845
+Epoch  73 Batch   28/44   train_loss = 1.836
+Epoch  74 Batch    4/44   train_loss = 1.764
+Epoch  74 Batch   24/44   train_loss = 1.712
+Epoch  75 Batch    0/44   train_loss = 1.751
+Epoch  75 Batch   20/44   train_loss = 1.786
+Epoch  75 Batch   40/44   train_loss = 1.662
+Epoch  76 Batch   16/44   train_loss = 1.719
+Epoch  76 Batch   36/44   train_loss = 1.688
+Epoch  77 Batch   12/44   train_loss = 1.635
+Epoch  77 Batch   32/44   train_loss = 1.664
+Epoch  78 Batch    8/44   train_loss = 1.658
+Epoch  78 Batch   28/44   train_loss = 1.653
+Epoch  79 Batch    4/44   train_loss = 1.619
+Epoch  79 Batch   24/44   train_loss = 1.551
+Epoch  80 Batch    0/44   train_loss = 1.593
+Epoch  80 Batch   20/44   train_loss = 1.627
+Epoch  80 Batch   40/44   train_loss = 1.504
+Epoch  81 Batch   16/44   train_loss = 1.582
+Epoch  81 Batch   36/44   train_loss = 1.544
+Epoch  82 Batch   12/44   train_loss = 1.508
+Epoch  82 Batch   32/44   train_loss = 1.532
+Epoch  83 Batch    8/44   train_loss = 1.518
+Epoch  83 Batch   28/44   train_loss = 1.530
+Epoch  84 Batch    4/44   train_loss = 1.534
+Epoch  84 Batch   24/44   train_loss = 1.429
+Epoch  85 Batch    0/44   train_loss = 1.513
+Epoch  85 Batch   20/44   train_loss = 1.528
+Epoch  85 Batch   40/44   train_loss = 1.416
+Epoch  86 Batch   16/44   train_loss = 1.492
+Epoch  86 Batch   36/44   train_loss = 1.423
+Epoch  87 Batch   12/44   train_loss = 1.393
+Epoch  87 Batch   32/44   train_loss = 1.441
+Epoch  88 Batch    8/44   train_loss = 1.397
+Epoch  88 Batch   28/44   train_loss = 1.450
+Epoch  89 Batch    4/44   train_loss = 1.413
+Epoch  89 Batch   24/44   train_loss = 1.328
+Epoch  90 Batch    0/44   train_loss = 1.352
+Epoch  90 Batch   20/44   train_loss = 1.369
+Epoch  90 Batch   40/44   train_loss = 1.271
+Epoch  91 Batch   16/44   train_loss = 1.361
+Epoch  91 Batch   36/44   train_loss = 1.310
+Epoch  92 Batch   12/44   train_loss = 1.267
+Epoch  92 Batch   32/44   train_loss = 1.327
+Epoch  93 Batch    8/44   train_loss = 1.331
+Epoch  93 Batch   28/44   train_loss = 1.290
+Epoch  94 Batch    4/44   train_loss = 1.287
+Epoch  94 Batch   24/44   train_loss = 1.221
+Epoch  95 Batch    0/44   train_loss = 1.265
+Epoch  95 Batch   20/44   train_loss = 1.230
+Epoch  95 Batch   40/44   train_loss = 1.133
+Epoch  96 Batch   16/44   train_loss = 1.210
+Epoch  96 Batch   36/44   train_loss = 1.183
+Epoch  97 Batch   12/44   train_loss = 1.157
+Epoch  97 Batch   32/44   train_loss = 1.169
+Epoch  98 Batch    8/44   train_loss = 1.170
+Epoch  98 Batch   28/44   train_loss = 1.156
+Epoch  99 Batch    4/44   train_loss = 1.173
+Epoch  99 Batch   24/44   train_loss = 1.078
+Epoch 100 Batch    0/44   train_loss = 1.107
+Epoch 100 Batch   20/44   train_loss = 1.109
+Epoch 100 Batch   40/44   train_loss = 1.019
+Epoch 101 Batch   16/44   train_loss = 1.099
+Epoch 101 Batch   36/44   train_loss = 1.084
+Epoch 102 Batch   12/44   train_loss = 1.066
+Epoch 102 Batch   32/44   train_loss = 1.077
+Epoch 103 Batch    8/44   train_loss = 1.079
+Epoch 103 Batch   28/44   train_loss = 1.069
+Epoch 104 Batch    4/44   train_loss = 1.087
+Epoch 104 Batch   24/44   train_loss = 0.996
+Epoch 105 Batch    0/44   train_loss = 1.034
+Epoch 105 Batch   20/44   train_loss = 1.034
+Epoch 105 Batch   40/44   train_loss = 0.940
+Epoch 106 Batch   16/44   train_loss = 1.014
+Epoch 106 Batch   36/44   train_loss = 1.015
+Epoch 107 Batch   12/44   train_loss = 1.007
+Epoch 107 Batch   32/44   train_loss = 1.010
+Epoch 108 Batch    8/44   train_loss = 0.990
+Epoch 108 Batch   28/44   train_loss = 0.996
+Epoch 109 Batch    4/44   train_loss = 1.038
+Epoch 109 Batch   24/44   train_loss = 0.944
+Epoch 110 Batch    0/44   train_loss = 0.960
+Epoch 110 Batch   20/44   train_loss = 0.963
+Epoch 110 Batch   40/44   train_loss = 0.893
+Epoch 111 Batch   16/44   train_loss = 0.958
+Epoch 111 Batch   36/44   train_loss = 0.949
+Epoch 112 Batch   12/44   train_loss = 0.950
+Epoch 112 Batch   32/44   train_loss = 0.978
+Epoch 113 Batch    8/44   train_loss = 0.950
+Epoch 113 Batch   28/44   train_loss = 0.932
+Epoch 114 Batch    4/44   train_loss = 0.987
+Epoch 114 Batch   24/44   train_loss = 0.902
+Epoch 115 Batch    0/44   train_loss = 0.938
+Epoch 115 Batch   20/44   train_loss = 0.915
+Epoch 115 Batch   40/44   train_loss = 0.841
+Epoch 116 Batch   16/44   train_loss = 0.919
+Epoch 116 Batch   36/44   train_loss = 0.918
+Epoch 117 Batch   12/44   train_loss = 0.935
+Epoch 117 Batch   32/44   train_loss = 0.936
+Epoch 118 Batch    8/44   train_loss = 0.920
+Epoch 118 Batch   28/44   train_loss = 0.883
+Epoch 119 Batch    4/44   train_loss = 0.985
+Epoch 119 Batch   24/44   train_loss = 0.908
+Epoch 120 Batch    0/44   train_loss = 0.869
+Epoch 120 Batch   20/44   train_loss = 0.870
+Epoch 120 Batch   40/44   train_loss = 0.825
+Epoch 121 Batch   16/44   train_loss = 0.884
+Epoch 121 Batch   36/44   train_loss = 0.860
+Epoch 122 Batch   12/44   train_loss = 0.876
+Epoch 122 Batch   32/44   train_loss = 0.878
+Epoch 123 Batch    8/44   train_loss = 0.842
+Epoch 123 Batch   28/44   train_loss = 0.833
+Epoch 124 Batch    4/44   train_loss = 0.889
+Epoch 124 Batch   24/44   train_loss = 0.805
+Epoch 125 Batch    0/44   train_loss = 0.825
+Epoch 125 Batch   20/44   train_loss = 0.820
+Epoch 125 Batch   40/44   train_loss = 0.751
+Epoch 126 Batch   16/44   train_loss = 0.827
+Epoch 126 Batch   36/44   train_loss = 0.817
+Epoch 127 Batch   12/44   train_loss = 0.835
+Epoch 127 Batch   32/44   train_loss = 0.840
+Epoch 128 Batch    8/44   train_loss = 0.811
+Epoch 128 Batch   28/44   train_loss = 0.796
+Epoch 129 Batch    4/44   train_loss = 0.852
+Epoch 129 Batch   24/44   train_loss = 0.775
+Epoch 130 Batch    0/44   train_loss = 0.798
+Epoch 130 Batch   20/44   train_loss = 0.800
+Epoch 130 Batch   40/44   train_loss = 0.720
+Epoch 131 Batch   16/44   train_loss = 0.799
+Epoch 131 Batch   36/44   train_loss = 0.801
+Epoch 132 Batch   12/44   train_loss = 0.820
+Epoch 132 Batch   32/44   train_loss = 0.810
+Epoch 133 Batch    8/44   train_loss = 0.779
+Epoch 133 Batch   28/44   train_loss = 0.774
+Epoch 134 Batch    4/44   train_loss = 0.842
+Epoch 134 Batch   24/44   train_loss = 0.756
+Epoch 135 Batch    0/44   train_loss = 0.766
+Epoch 135 Batch   20/44   train_loss = 0.768
+Epoch 135 Batch   40/44   train_loss = 0.709
+Epoch 136 Batch   16/44   train_loss = 0.780
+Epoch 136 Batch   36/44   train_loss = 0.765
+Epoch 137 Batch   12/44   train_loss = 0.790
+Epoch 137 Batch   32/44   train_loss = 0.800
+Epoch 138 Batch    8/44   train_loss = 0.757
+Epoch 138 Batch   28/44   train_loss = 0.741
+Epoch 139 Batch    4/44   train_loss = 0.810
+Epoch 139 Batch   24/44   train_loss = 0.735
+Epoch 140 Batch    0/44   train_loss = 0.749
+Epoch 140 Batch   20/44   train_loss = 0.742
+Epoch 140 Batch   40/44   train_loss = 0.678
+Epoch 141 Batch   16/44   train_loss = 0.750
+Epoch 141 Batch   36/44   train_loss = 0.750
+Epoch 142 Batch   12/44   train_loss = 0.774
+Epoch 142 Batch   32/44   train_loss = 0.776
+Epoch 143 Batch    8/44   train_loss = 0.737
+Epoch 143 Batch   28/44   train_loss = 0.725
+Epoch 144 Batch    4/44   train_loss = 0.794
+Epoch 144 Batch   24/44   train_loss = 0.718
+Epoch 145 Batch    0/44   train_loss = 0.735
+Epoch 145 Batch   20/44   train_loss = 0.723
+Epoch 145 Batch   40/44   train_loss = 0.665
+Epoch 146 Batch   16/44   train_loss = 0.739
+Epoch 146 Batch   36/44   train_loss = 0.741
+Epoch 147 Batch   12/44   train_loss = 0.764
+Epoch 147 Batch   32/44   train_loss = 0.762
+Epoch 148 Batch    8/44   train_loss = 0.727
+Epoch 148 Batch   28/44   train_loss = 0.712
+Epoch 149 Batch    4/44   train_loss = 0.782
+Epoch 149 Batch   24/44   train_loss = 0.712
+Epoch 150 Batch    0/44   train_loss = 0.723
+Epoch 150 Batch   20/44   train_loss = 0.709
+Epoch 150 Batch   40/44   train_loss = 0.658
+Epoch 151 Batch   16/44   train_loss = 0.730
+Epoch 151 Batch   36/44   train_loss = 0.730
+Epoch 152 Batch   12/44   train_loss = 0.752
+Epoch 152 Batch   32/44   train_loss = 0.748
+Epoch 153 Batch    8/44   train_loss = 0.719
+Epoch 153 Batch   28/44   train_loss = 0.704
+Epoch 154 Batch    4/44   train_loss = 0.772
+Epoch 154 Batch   24/44   train_loss = 0.710
+Epoch 155 Batch    0/44   train_loss = 0.716
+Epoch 155 Batch   20/44   train_loss = 0.697
+Epoch 155 Batch   40/44   train_loss = 0.648
+Epoch 156 Batch   16/44   train_loss = 0.722
+Epoch 156 Batch   36/44   train_loss = 0.715
+Epoch 157 Batch   12/44   train_loss = 0.740
+Epoch 157 Batch   32/44   train_loss = 0.736
+Epoch 158 Batch    8/44   train_loss = 0.709
+Epoch 158 Batch   28/44   train_loss = 0.697
+Epoch 159 Batch    4/44   train_loss = 0.763
+Epoch 159 Batch   24/44   train_loss = 0.701
+Epoch 160 Batch    0/44   train_loss = 0.710
+Epoch 160 Batch   20/44   train_loss = 0.692
+Epoch 160 Batch   40/44   train_loss = 0.636
+Epoch 161 Batch   16/44   train_loss = 0.706
+Epoch 161 Batch   36/44   train_loss = 0.710
+Epoch 162 Batch   12/44   train_loss = 0.736
+Epoch 162 Batch   32/44   train_loss = 0.730
+Epoch 163 Batch    8/44   train_loss = 0.701
+Epoch 163 Batch   28/44   train_loss = 0.685
+Epoch 164 Batch    4/44   train_loss = 0.763
+Epoch 164 Batch   24/44   train_loss = 0.693
+Epoch 165 Batch    0/44   train_loss = 0.699
+Epoch 165 Batch   20/44   train_loss = 0.680
+Epoch 165 Batch   40/44   train_loss = 0.629
+Epoch 166 Batch   16/44   train_loss = 0.702
+Epoch 166 Batch   36/44   train_loss = 0.708
+Epoch 167 Batch   12/44   train_loss = 0.730
+Epoch 167 Batch   32/44   train_loss = 0.722
+Epoch 168 Batch    8/44   train_loss = 0.697
+Epoch 168 Batch   28/44   train_loss = 0.677
+Epoch 169 Batch    4/44   train_loss = 0.753
+Epoch 169 Batch   24/44   train_loss = 0.685
+Epoch 170 Batch    0/44   train_loss = 0.692
+Epoch 170 Batch   20/44   train_loss = 0.678
+Epoch 170 Batch   40/44   train_loss = 0.625
+Epoch 171 Batch   16/44   train_loss = 0.699
+Epoch 171 Batch   36/44   train_loss = 0.708
+Epoch 172 Batch   12/44   train_loss = 0.724
+Epoch 172 Batch   32/44   train_loss = 0.715
+Epoch 173 Batch    8/44   train_loss = 0.687
+Epoch 173 Batch   28/44   train_loss = 0.672
+Epoch 174 Batch    4/44   train_loss = 0.750
+Epoch 174 Batch   24/44   train_loss = 0.682
+Epoch 175 Batch    0/44   train_loss = 0.687
+Epoch 175 Batch   20/44   train_loss = 0.675
+Epoch 175 Batch   40/44   train_loss = 0.623
+Epoch 176 Batch   16/44   train_loss = 0.695
+Epoch 176 Batch   36/44   train_loss = 0.702
+Epoch 177 Batch   12/44   train_loss = 0.714
+Epoch 177 Batch   32/44   train_loss = 0.706
+Epoch 178 Batch    8/44   train_loss = 0.682
+Epoch 178 Batch   28/44   train_loss = 0.669
+Epoch 179 Batch    4/44   train_loss = 0.744
+Epoch 179 Batch   24/44   train_loss = 0.680
+Epoch 180 Batch    0/44   train_loss = 0.683
+Epoch 180 Batch   20/44   train_loss = 0.672
+Epoch 180 Batch   40/44   train_loss = 0.619
+Epoch 181 Batch   16/44   train_loss = 0.688
+Epoch 181 Batch   36/44   train_loss = 0.696
+Epoch 182 Batch   12/44   train_loss = 0.709
+Epoch 182 Batch   32/44   train_loss = 0.701
+Epoch 183 Batch    8/44   train_loss = 0.681
+Epoch 183 Batch   28/44   train_loss = 0.668
+Epoch 184 Batch    4/44   train_loss = 0.741
+Epoch 184 Batch   24/44   train_loss = 0.676
+Epoch 185 Batch    0/44   train_loss = 0.681
+Epoch 185 Batch   20/44   train_loss = 0.668
+Epoch 185 Batch   40/44   train_loss = 0.615
+Epoch 186 Batch   16/44   train_loss = 0.680
+Epoch 186 Batch   36/44   train_loss = 0.690
+Epoch 187 Batch   12/44   train_loss = 0.707
+Epoch 187 Batch   32/44   train_loss = 0.696
+Epoch 188 Batch    8/44   train_loss = 0.679
+Epoch 188 Batch   28/44   train_loss = 0.664
+Epoch 189 Batch    4/44   train_loss = 0.735
+Epoch 189 Batch   24/44   train_loss = 0.674
+Epoch 190 Batch    0/44   train_loss = 0.677
+Epoch 190 Batch   20/44   train_loss = 0.665
+Epoch 190 Batch   40/44   train_loss = 0.611
+Epoch 191 Batch   16/44   train_loss = 0.675
+Epoch 191 Batch   36/44   train_loss = 0.686
+Epoch 192 Batch   12/44   train_loss = 0.705
+Epoch 192 Batch   32/44   train_loss = 0.695
+Epoch 193 Batch    8/44   train_loss = 0.673
+Epoch 193 Batch   28/44   train_loss = 0.662
+Epoch 194 Batch    4/44   train_loss = 0.729
+Epoch 194 Batch   24/44   train_loss = 0.670
+Epoch 195 Batch    0/44   train_loss = 0.673
+Epoch 195 Batch   20/44   train_loss = 0.664
+Epoch 195 Batch   40/44   train_loss = 0.609
+Epoch 196 Batch   16/44   train_loss = 0.673
+Epoch 196 Batch   36/44   train_loss = 0.683
+Epoch 197 Batch   12/44   train_loss = 0.705
+Epoch 197 Batch   32/44   train_loss = 0.695
+Epoch 198 Batch    8/44   train_loss = 0.665
+Epoch 198 Batch   28/44   train_loss = 0.658
+Epoch 199 Batch    4/44   train_loss = 0.722
+Epoch 199 Batch   24/44   train_loss = 0.666
+Epoch 200 Batch    0/44   train_loss = 0.670
+Epoch 200 Batch   20/44   train_loss = 0.664
+Epoch 200 Batch   40/44   train_loss = 0.609
+Epoch 201 Batch   16/44   train_loss = 0.676
+Epoch 201 Batch   36/44   train_loss = 0.687
+Epoch 202 Batch   12/44   train_loss = 0.704
+Epoch 202 Batch   32/44   train_loss = 0.694
+Epoch 203 Batch    8/44   train_loss = 0.657
+Epoch 203 Batch   28/44   train_loss = 0.653
+Epoch 204 Batch    4/44   train_loss = 0.718
+Epoch 204 Batch   24/44   train_loss = 0.663
+Epoch 205 Batch    0/44   train_loss = 0.669
+Epoch 205 Batch   20/44   train_loss = 0.667
+Epoch 205 Batch   40/44   train_loss = 0.612
+Epoch 206 Batch   16/44   train_loss = 0.682
+Epoch 206 Batch   36/44   train_loss = 0.685
+Epoch 207 Batch   12/44   train_loss = 0.696
+Epoch 207 Batch   32/44   train_loss = 0.688
+Epoch 208 Batch    8/44   train_loss = 0.653
+Epoch 208 Batch   28/44   train_loss = 0.652
+Epoch 209 Batch    4/44   train_loss = 0.721
+Epoch 209 Batch   24/44   train_loss = 0.667
+Epoch 210 Batch    0/44   train_loss = 0.677
+Epoch 210 Batch   20/44   train_loss = 0.665
+Epoch 210 Batch   40/44   train_loss = 0.606
+Epoch 211 Batch   16/44   train_loss = 0.673
+Epoch 211 Batch   36/44   train_loss = 0.674
+Epoch 212 Batch   12/44   train_loss = 0.696
+Epoch 212 Batch   32/44   train_loss = 0.688
+Epoch 213 Batch    8/44   train_loss = 0.662
+Epoch 213 Batch   28/44   train_loss = 0.661
+Epoch 214 Batch    4/44   train_loss = 0.727
+Epoch 214 Batch   24/44   train_loss = 0.665
+Epoch 215 Batch    0/44   train_loss = 0.669
+Epoch 215 Batch   20/44   train_loss = 0.657
+Epoch 215 Batch   40/44   train_loss = 0.598
+Epoch 216 Batch   16/44   train_loss = 0.668
+Epoch 216 Batch   36/44   train_loss = 0.675
+Epoch 217 Batch   12/44   train_loss = 0.704
+Epoch 217 Batch   32/44   train_loss = 0.691
+Epoch 218 Batch    8/44   train_loss = 0.662
+Epoch 218 Batch   28/44   train_loss = 0.659
+Epoch 219 Batch    4/44   train_loss = 0.713
+Epoch 219 Batch   24/44   train_loss = 0.656
+Epoch 220 Batch    0/44   train_loss = 0.664
+Epoch 220 Batch   20/44   train_loss = 0.656
+Epoch 220 Batch   40/44   train_loss = 0.601
+Epoch 221 Batch   16/44   train_loss = 0.676
+Epoch 221 Batch   36/44   train_loss = 0.678
+Epoch 222 Batch   12/44   train_loss = 0.702
+Epoch 222 Batch   32/44   train_loss = 0.686
+Epoch 223 Batch    8/44   train_loss = 0.651
+Epoch 223 Batch   28/44   train_loss = 0.652
+Epoch 224 Batch    4/44   train_loss = 0.710
+Epoch 224 Batch   24/44   train_loss = 0.656
+Epoch 225 Batch    0/44   train_loss = 0.667
+Epoch 225 Batch   20/44   train_loss = 0.656
+Epoch 225 Batch   40/44   train_loss = 0.601
+Epoch 226 Batch   16/44   train_loss = 0.676
+Epoch 226 Batch   36/44   train_loss = 0.674
+Epoch 227 Batch   12/44   train_loss = 0.696
+Epoch 227 Batch   32/44   train_loss = 0.681
+Epoch 228 Batch    8/44   train_loss = 0.656
+Epoch 228 Batch   28/44   train_loss = 0.650
+Epoch 229 Batch    4/44   train_loss = 0.719
+Epoch 229 Batch   24/44   train_loss = 0.658
+Epoch 230 Batch    0/44   train_loss = 0.662
+Epoch 230 Batch   20/44   train_loss = 0.651
+Epoch 230 Batch   40/44   train_loss = 0.596
+Epoch 231 Batch   16/44   train_loss = 0.673
+Epoch 231 Batch   36/44   train_loss = 0.674
+Epoch 232 Batch   12/44   train_loss = 0.697
+Epoch 232 Batch   32/44   train_loss = 0.683
+Epoch 233 Batch    8/44   train_loss = 0.662
+Epoch 233 Batch   28/44   train_loss = 0.650
+Epoch 234 Batch    4/44   train_loss = 0.719
+Epoch 234 Batch   24/44   train_loss = 0.655
+Epoch 235 Batch    0/44   train_loss = 0.658
+Epoch 235 Batch   20/44   train_loss = 0.645
+Epoch 235 Batch   40/44   train_loss = 0.594
+Epoch 236 Batch   16/44   train_loss = 0.669
+Epoch 236 Batch   36/44   train_loss = 0.676
+Epoch 237 Batch   12/44   train_loss = 0.699
+Epoch 237 Batch   32/44   train_loss = 0.685
+Epoch 238 Batch    8/44   train_loss = 0.658
+Epoch 238 Batch   28/44   train_loss = 0.646
+Epoch 239 Batch    4/44   train_loss = 0.709
+Epoch 239 Batch   24/44   train_loss = 0.654
+Epoch 240 Batch    0/44   train_loss = 0.657
+Epoch 240 Batch   20/44   train_loss = 0.647
+Epoch 240 Batch   40/44   train_loss = 0.595
+Epoch 241 Batch   16/44   train_loss = 0.667
+Epoch 241 Batch   36/44   train_loss = 0.673
+Epoch 242 Batch   12/44   train_loss = 0.693
+Epoch 242 Batch   32/44   train_loss = 0.683
+Epoch 243 Batch    8/44   train_loss = 0.656
+Epoch 243 Batch   28/44   train_loss = 0.646
+Epoch 244 Batch    4/44   train_loss = 0.709
+Epoch 244 Batch   24/44   train_loss = 0.657
+Epoch 245 Batch    0/44   train_loss = 0.657
+Epoch 245 Batch   20/44   train_loss = 0.643
+Epoch 245 Batch   40/44   train_loss = 0.593
+Epoch 246 Batch   16/44   train_loss = 0.666
+Epoch 246 Batch   36/44   train_loss = 0.674
+Epoch 247 Batch   12/44   train_loss = 0.690
+Epoch 247 Batch   32/44   train_loss = 0.686
+Epoch 248 Batch    8/44   train_loss = 0.657
+Epoch 248 Batch   28/44   train_loss = 0.641
+Epoch 249 Batch    4/44   train_loss = 0.708
+Epoch 249 Batch   24/44   train_loss = 0.654
+Epoch 250 Batch    0/44   train_loss = 0.659
+Epoch 250 Batch   20/44   train_loss = 0.651
+Epoch 250 Batch   40/44   train_loss = 0.600
+Epoch 251 Batch   16/44   train_loss = 0.670
+Epoch 251 Batch   36/44   train_loss = 0.672
+Epoch 252 Batch   12/44   train_loss = 0.685
+Epoch 252 Batch   32/44   train_loss = 0.677
+Epoch 253 Batch    8/44   train_loss = 0.658
+Epoch 253 Batch   28/44   train_loss = 0.645
+Epoch 254 Batch    4/44   train_loss = 0.717
+Epoch 254 Batch   24/44   train_loss = 0.655
+Epoch 255 Batch    0/44   train_loss = 0.656
+Epoch 255 Batch   20/44   train_loss = 0.642
+Epoch 255 Batch   40/44   train_loss = 0.591
+Epoch 256 Batch   16/44   train_loss = 0.659
+Epoch 256 Batch   36/44   train_loss = 0.671
+Epoch 257 Batch   12/44   train_loss = 0.686
+Epoch 257 Batch   32/44   train_loss = 0.673
+Epoch 258 Batch    8/44   train_loss = 0.651
+Epoch 258 Batch   28/44   train_loss = 0.636
+Epoch 259 Batch    4/44   train_loss = 0.705
+Epoch 259 Batch   24/44   train_loss = 0.648
+Epoch 260 Batch    0/44   train_loss = 0.652
+Epoch 260 Batch   20/44   train_loss = 0.640
+Epoch 260 Batch   40/44   train_loss = 0.588
+Epoch 261 Batch   16/44   train_loss = 0.654
+Epoch 261 Batch   36/44   train_loss = 0.663
+Epoch 262 Batch   12/44   train_loss = 0.681
+Epoch 262 Batch   32/44   train_loss = 0.667
+Epoch 263 Batch    8/44   train_loss = 0.644
+Epoch 263 Batch   28/44   train_loss = 0.635
+Epoch 264 Batch    4/44   train_loss = 0.703
+Epoch 264 Batch   24/44   train_loss = 0.646
+Epoch 265 Batch    0/44   train_loss = 0.648
+Epoch 265 Batch   20/44   train_loss = 0.636
+Epoch 265 Batch   40/44   train_loss = 0.587
+Epoch 266 Batch   16/44   train_loss = 0.652
+Epoch 266 Batch   36/44   train_loss = 0.663
+Epoch 267 Batch   12/44   train_loss = 0.680
+Epoch 267 Batch   32/44   train_loss = 0.664
+Epoch 268 Batch    8/44   train_loss = 0.643
+Epoch 268 Batch   28/44   train_loss = 0.634
+Epoch 269 Batch    4/44   train_loss = 0.700
+Epoch 269 Batch   24/44   train_loss = 0.645
+Epoch 270 Batch    0/44   train_loss = 0.646
+Epoch 270 Batch   20/44   train_loss = 0.636
+Epoch 270 Batch   40/44   train_loss = 0.585
+Epoch 271 Batch   16/44   train_loss = 0.651
+Epoch 271 Batch   36/44   train_loss = 0.661
+Epoch 272 Batch   12/44   train_loss = 0.679
+Epoch 272 Batch   32/44   train_loss = 0.665
+Epoch 273 Batch    8/44   train_loss = 0.643
+Epoch 273 Batch   28/44   train_loss = 0.631
+Epoch 274 Batch    4/44   train_loss = 0.699
+Epoch 274 Batch   24/44   train_loss = 0.643
+Epoch 275 Batch    0/44   train_loss = 0.645
+Epoch 275 Batch   20/44   train_loss = 0.636
+Epoch 275 Batch   40/44   train_loss = 0.584
+Epoch 276 Batch   16/44   train_loss = 0.651
+Epoch 276 Batch   36/44   train_loss = 0.660
+Epoch 277 Batch   12/44   train_loss = 0.677
+Epoch 277 Batch   32/44   train_loss = 0.664
+Epoch 278 Batch    8/44   train_loss = 0.643
+Epoch 278 Batch   28/44   train_loss = 0.631
+Epoch 279 Batch    4/44   train_loss = 0.699
+Epoch 279 Batch   24/44   train_loss = 0.642
+Epoch 280 Batch    0/44   train_loss = 0.646
+Epoch 280 Batch   20/44   train_loss = 0.635
+Epoch 280 Batch   40/44   train_loss = 0.583
+Epoch 281 Batch   16/44   train_loss = 0.650
+Epoch 281 Batch   36/44   train_loss = 0.660
+Epoch 282 Batch   12/44   train_loss = 0.675
+Epoch 282 Batch   32/44   train_loss = 0.665
+Epoch 283 Batch    8/44   train_loss = 0.643
+Epoch 283 Batch   28/44   train_loss = 0.632
+Epoch 284 Batch    4/44   train_loss = 0.698
+Epoch 284 Batch   24/44   train_loss = 0.642
+Epoch 285 Batch    0/44   train_loss = 0.644
+Epoch 285 Batch   20/44   train_loss = 0.634
+Epoch 285 Batch   40/44   train_loss = 0.584
+Epoch 286 Batch   16/44   train_loss = 0.651
+Epoch 286 Batch   36/44   train_loss = 0.659
+Epoch 287 Batch   12/44   train_loss = 0.675
+Epoch 287 Batch   32/44   train_loss = 0.664
+Epoch 288 Batch    8/44   train_loss = 0.641
+Epoch 288 Batch   28/44   train_loss = 0.631
+Epoch 289 Batch    4/44   train_loss = 0.697
+Epoch 289 Batch   24/44   train_loss = 0.642
+Epoch 290 Batch    0/44   train_loss = 0.643
+Epoch 290 Batch   20/44   train_loss = 0.634
+Epoch 290 Batch   40/44   train_loss = 0.584
+Epoch 291 Batch   16/44   train_loss = 0.651
+Epoch 291 Batch   36/44   train_loss = 0.658
+Epoch 292 Batch   12/44   train_loss = 0.676
+Epoch 292 Batch   32/44   train_loss = 0.663
+Epoch 293 Batch    8/44   train_loss = 0.640
+Epoch 293 Batch   28/44   train_loss = 0.630
+Epoch 294 Batch    4/44   train_loss = 0.696
+Epoch 294 Batch   24/44   train_loss = 0.641
+Epoch 295 Batch    0/44   train_loss = 0.642
+Epoch 295 Batch   20/44   train_loss = 0.633
+Epoch 295 Batch   40/44   train_loss = 0.582
+Epoch 296 Batch   16/44   train_loss = 0.649
+Epoch 296 Batch   36/44   train_loss = 0.658
+Epoch 297 Batch   12/44   train_loss = 0.676
+Epoch 297 Batch   32/44   train_loss = 0.662
+Epoch 298 Batch    8/44   train_loss = 0.639
+Epoch 298 Batch   28/44   train_loss = 0.630
+Epoch 299 Batch    4/44   train_loss = 0.696
+Epoch 299 Batch   24/44   train_loss = 0.641
 Model Trained and Saved
 </pre>
 </div>
@@ -13283,7 +13690,7 @@ Model Trained and Saved
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">pick_word</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">int_to_vocab</span><span class="p">):</span>
@@ -13295,8 +13702,9 @@ Model Trained and Saved
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO: Implement Function</span>
     <span class="c1">#print(&quot;probabs:{}, - {}&quot;.format(probabilities.shape, int_to_vocab[np.argmax(probabilities)]))</span>
-    
-    <span class="k">return</span> <span class="n">int_to_vocab</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)]</span>
+    <span class="n">mostprobable</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">mostprobable</span><span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">int_to_vocab</span><span class="p">[</span><span class="n">ret</span><span class="p">]</span>
 
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -13338,12 +13746,12 @@ Model Trained and Saved
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">gen_length</span> <span class="o">=</span> <span class="mi">200</span>
 <span class="c1"># homer_simpson, moe_szyslak, or Barney_Gumble</span>
-<span class="n">prime_word</span> <span class="o">=</span> <span class="s1">&#39;homer_simpson&#39;</span>
+<span class="n">prime_word</span> <span class="o">=</span> <span class="s1">&#39;moe_szyslak&#39;</span>
 
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -13400,7 +13808,7 @@ Model Trained and Saved
 <div class="prompt"></div>
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>homer_simpson: splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered splattered audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: audience: splattered splattered splattered splattered splattered splattered splattered splattered
+<pre>moe_szyslak: de gator: superdad danny thing&#39;s maude waste ding-a-ding-ding-a-ding-ding poker joined bathtub patrons grope grope f belch ding-a-ding-ding-a-ding-ding exchanged ourselves sheriff ding-a-ding-ding-a-ding-ding bumblebee_man: sideshow showered stationery wear meet dana_scully: patron_#1: realized joined ditched grope ho-la watching patient noosey kegs tribute ees happily furious director bide bide wake ugh chauffeur accept peter forget fightin&#39; bid augustus increased deny obsessive-compulsive hit joined prettied aggravazes ding-a-ding-ding-a-ding-ding ding-a-ding-ding-a-ding-ding cranberry tear presto: dice s&#39;cuse s&#39;cuse jovial ho-la bid hit joined joined julep ding-a-ding-ding-a-ding-ding bide obsessive-compulsive leavin&#39; bide ding-a-ding-ding-a-ding-ding ho-la chuck chuck sweetie magnanimous mm waste write ding-a-ding-ding-a-ding-ding starla&#39;s bide ho-la noosey clientele tears bumblebee_man: mm ho-la write grope chauffeur bide knit presto: encores hit noosey bide bide international title waste chuck chuck forget waste ho-la ho-la magnanimous magnanimous ho-la venom augustus forget waste spit connection party peter ho-la advertise hit joined promotion 91 bide chauffeur whoo ho-la dollface joined menacing superdad joined joined joined become bide grope eyed eyed eyed dollface sex ding-a-ding-ding-a-ding-ding ho-la knit tears bide blame director warranty advertise noosey bathtub promotion premise hit superdad ho-la ho-la augustus knit grope bide bide gettin&#39; premise chuck hit augustus ho-la ho-la ho-la ding-a-ding-ding-a-ding-ding follow suru meet forget write ding-a-ding-ding-a-ding-ding ding-a-ding-ding-a-ding-ding chuck magnanimous cap hank_williams_jr moe_recording: ralph
 </pre>
 </div>
 </div>
@@ -13451,7 +13859,7 @@ Model Trained and Saved
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
+<div class=" highlight hl-ipython3"><pre><span></span>
 </pre></div>
 
 </div>
